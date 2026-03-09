@@ -1,0 +1,15 @@
+# See your entry in the sacctmgr database
+sacctmgr show user withassoc where name=$USER
+
+# See our currently defined QOS in default format
+sacctmgr show qos
+
+# See our currently defined QOS in a readable format
+# (*we put this in the script "showqos")
+sacctmgr show qos format=Name%20,Priority,Flags%30,MaxWall,MaxTRESPU%20,MaxJobsPU,MaxSubmitPU,MaxTRESPA%25
+
+# See all users database values
+sacctmgr show user withassoc  | less
+
+# See a particular user's database values
+sacctmgr show user withassoc where name=smburke
