@@ -12,4 +12,11 @@ sacctmgr show qos format=Name%20,Priority,Flags%30,MaxWall,MaxTRESPU%20,MaxJobsP
 sacctmgr show user withassoc  | less
 
 # See a particular user's database values
-sacctmgr show user withassoc where name=smburke
+sacctmgr show user withassoc where name=$USER
+
+
+sacctmgr show Association User=${USER}  "format=Account%20,qos"
+
+squeue --start --job=$1
+
+squeue --user=${USER} --long
