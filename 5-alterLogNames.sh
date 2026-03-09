@@ -1,9 +1,7 @@
 #!/bin/bash
 # --- account ------------------------------------------------------ 
-#SBATCH --qos FIX_THIS
 #SBATCH --account FIX_THIS 
 #SBATCH --partition=pvc9 
-
 
 # --- resources ------------------------------------------------------
 # job name 
