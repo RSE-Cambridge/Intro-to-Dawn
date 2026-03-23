@@ -1,0 +1,118 @@
+[project]
+name = "testUV"
+version = "0.1.0"
+description = " "
+readme = "README.md"
+authors = [
+    { name = "Simon Hartley", email = "sh824@cam.ac.uk" }
+]
+requires-python = ">=3.14.0"
+dependencies = [
+    # Core dependencies
+    "numpy>=1.24.0",
+    "opencv-python>=4.8.0",
+    "scikit-image>=0.21.0",
+    "scipy>=1.11.0",
+    "pillow>=10.0.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",  
+    "tqdm>=4.65.0",
+    "pyyaml>=6.0.3",
+    "pydantic>=2.12.5",
+    "loguru>=0.7.0", 
+]
+
+[project.optional-dependencies]
+
+# cpu = [
+#     "torch>=2.9.1",
+#     "torchvision>=0.24.1",
+# ]
+# cu128 = [
+#     "torch>=2.9.1",
+#     "torchvision>=0.24.1",
+# ]
+
+#rocm = [
+#    "torch>=2.9.1",
+#    "torchvision>=0.24.1",
+#    "pytorch-triton-rocm>=3.5.1 ; sys_platform == 'linux'",
+#    "transformers",
+#    "accelerate",
+#    "qwen-vl-utils[decord]",
+#]
+
+xpu = [
+    "torch>=2.9.1",
+    "torchvision>=0.24.1",   
+    "pytorch-triton-xpu>=3.5.0 ; sys_platform == 'linux'",  
+     # Install transformers with the torch extra
+    "transformers[torch] >=4.0,<4.3",
+    "pytorch-triton-xpu>=3.3.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
+    "accelerate", 
+] 
+
+[tool.uv.sources]
+torch = [
+    # { index = "pytorch-cpu", extra = "cpu" },
+    # { index = "pytorch-cu128", extra = "cu128" },
+    # { index = "pytorch-rocm", marker = "sys_platform == 'linux'" },
+    { index = "pytorch-xpu", marker = "sys_platform == 'linux'" },
+
+]
+torchvision = [
+    # { index = "pytorch-cpu", extra = "cpu" },
+    # { index = "pytorch-cu128", extra = "cu128"},
+    # { index = "pytorch-rocm", marker = "sys_platform == 'linux'" },
+    { index = "pytorch-xpu", marker = "sys_platform == 'linux'" },
+]
+
+#pytorch-triton-rocm = [
+#    { index = "pytorch-rocm", marker = "sys_platform == 'linux'" },
+#]
+
+pytorch-triton-xpu = [
+  { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
+] 
+# Development dependencies
+# dev = [
+#     "ipykernel>=6.0.0",
+#     "jinja2>=3.1.6",
+#     "pre-commit>=4.5.1",
+#     "pytest>=7.0.0",
+#     "pytest-cov>=4.0.0",
+#     "ruff>=0.1.0",
+#     "mypy>=1.5.0",
+#     "python-dotenv>=1.2.1", 
+# ]
+ 
+
+# flash-attn requires torch to build
+
+# flash-attn needs torch available during build
+[tool.uv.extra-build-dependencies]
+flash-attn = ["torch"]
+
+# [[tool.uv.index]]
+# name = "pytorch-cpu"
+# url = "https://download.pytorch.org/whl/cpu"
+# explicit = true
+
+# [[tool.uv.index]]
+# name = "pytorch-cu128"
+# url = "https://download.pytorch.org/whl/cu128"
+# explicit = true
+
+#[[tool.uv.index]]
+#name = "pytorch-rocm"
+#url = "https://download.pytorch.org/whl/rocm6.4"
+#explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-xpu"
+url = "https://download.pytorch.org/whl/xpu"
+explicit = true
+
+[build-system]
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"

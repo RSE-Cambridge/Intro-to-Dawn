@@ -11,20 +11,19 @@
 #SBATCH --gres=gpu:1                # number of allocated gpus per node
 
 # --- environment ----------------------------------------------------
-module purge
-module load rhel9/default-dawn
-module load intelpython
+module purge 
+module load rhel9/default-dawn      
+module load intelpython-conda/2025.0  
+conda activate pytorch-gpu-2.3.1
+
 # Visit https://github.com/RSE-Cambridge/Intro-to-Dawn for more information
 
-# Example 1 - This example just shows the bare minimum of module loading
+# Example 2 - This example just shows the bare minimum of module loading
 #  It loads the module which has been provided by us for intelpython with conda
+# in load the GPU enabled environment
 
-module purge
-module load rhel9/default-dawn
-module load intelpython-conda/2025.0
-conda info --envs
+echo "Testing GPU with pytorch"
 
-echo -n "Script is running on "
-hostname
+python -c "import torch; import intel_extension_for_pytorch as ipex; print(torch.__version__); print(ipex.__version__); [print(f'[{i}]: {torch.xpu.get_device_properties(i)}') for i in range(torch.xpu.device_count())];"
 
-sleep 15
+ 
