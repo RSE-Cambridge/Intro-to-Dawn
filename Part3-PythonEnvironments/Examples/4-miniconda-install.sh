@@ -64,7 +64,7 @@ source "${PROJECTROOT}/bin/activate" base
 # not doing a conda init due to changes to .bashrc
 conda create --yes --prefix="${FULL_P_VENV_NAME}"  python=3.12
 export CONDA_ENVS_PATH="${FULL_P_VENV_NAME}:${CONDA_ENVS_PATH}"
-   
+conda init bash  
 conda activate "${FULL_P_VENV_NAME}" 
 python -m pip install torch==2.8.0 torchvision==0.23.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/xpu
 python -m pip install intel-extension-for-pytorch==2.8.10+xpu oneccl_bind_pt==2.8.0+xpu --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/

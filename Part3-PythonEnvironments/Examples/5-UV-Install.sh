@@ -26,7 +26,7 @@ export PROJECTROOT="$(pwd -P)"
 
 UV_INSTALL_DIR="${PROJECTROOT}/venv/uv/bin"
 UV_BIN="${UV_INSTALL_DIR}"
-UV_CACHE_DIR="/rds/user/${USER}/hpc-work/.UV_CACHE_DIR"
+UV_CACHE_DIR="/rds/user/${USER}/rds/.UV_CACHE_DIR"
 
 
 DIR="${PROJECTROOT}/venv"
