@@ -16,13 +16,14 @@
 #SBATCH --time=00:15:00             # Time assigned for the simulation
                                     #         days-hours:minutes:seconds 
 
-# Exit at first failure.
-set -e
 
 # --- environment ----------------------------------------------------
 module purge 
-module load rhel9/default-dawn 
+module load rhel9/default-dawn  
  
+# Exit at first failure.
+set -e
+
 # --- run ------------------------------------------------------------
 CMD="apptainer run --writable-tmpfs ApptainerEx.sif"
 echo "${CMD}"

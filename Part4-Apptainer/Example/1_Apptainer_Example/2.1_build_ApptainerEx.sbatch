@@ -1,4 +1,5 @@
-#!/bin/bash 
+#!/bin/bash
+# --- account ------------------------------------------------------
 # --- account ------------------------------------------------------
 #SBATCH --account=<FIX_ME>      # Only required if you are a member of more than one Dawn project
 #SBATCH --partition=pvc9  
@@ -24,7 +25,7 @@ module load rhel9/default-dawn
 unset APPTAINER_BIND 
 
 # clean cache older than 10 days to save space
-yes Y | apptainer cache clean --days 10 
+yes Y |apptainer cache clean --days 10 
 
 echo "APPTAINER_CACHEDIR=${APPTAINER_CACHEDIR}"
 
