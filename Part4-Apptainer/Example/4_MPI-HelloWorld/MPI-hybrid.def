@@ -1,0 +1,76 @@
+Bootstrap: docker
+From: {{BASE_IMAGE_NAME}}:{{ BASE_IMAGE_TAG}}
+
+%arguments  
+    BASE_IMAGE_NAME=intel/deep-learning-essentials
+    BASE_IMAGE_TAG=2025.3.0-0-devel-rockylinux9
+    PYTHON_MAJOR_VERSION=3
+    PYTHON_MINOR_VERSION=12.5 
+
+%files
+    mpi_c_test 
+
+%setup 
+     mkdir -p ${APPTAINER_ROOTFS}/usr/local/intel-oneapi/2025.3/mpi/2021.17/bin 
+     mkdir -p ${APPTAINER_ROOTFS}/usr/local/mpi/2021.17/lib 
+
+    cp -s /usr/local/dawn/software/external/intel-oneapi/2025.3/mpi/2021.17/bin ${APPTAINER_ROOTFS}/usr/local/intel-oneapi/2025.3/mpi/2021.17/bin 
+    cp -s /usr/local/dawn/software/external/intel-oneapi/2025.3/mpi/2021.17/lib ${APPTAINER_ROOTFS}/usr/local/mpi/2021.17/lib
+ 
+
+%environment
+      export MPI_ONEAPI_DIR=/usr/local/intel-oneapi/2025.3/mpi/2021.17/bin:/usr/local/intel-oneapi/2025.3/mpi/2021.17/libfabric/bin:/usr/local/mpi/2021.17/lib:/usr/local/mpi/2021.17/opt/mpi/libfabric
+    APPTAINERGULARITY_MPI_ONEAPI_DIR=$MPI_ONEAPI_DIR
+    APPTAINERNGULARITYENV_APPEND_PATH=$MPI_ONEAPI_DIR
+    APPTAINERINGULAIRTYENV_APPEND_LD_LIBRARY_PATH=$MPI_ONEAPI_DIR
+
+%post 
+   curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releases/download/0.9.6/uv-installer.sh | env   UV_INSTALL_DIR="/usr/bin" sh    
+    uv python install {{ PYTHON_MAJOR_VERSION }}.{{ PYTHON_MINOR_VERSION }} 
+    uv venv --python {{ PYTHON_MAJOR_VERSION }}.{{ PYTHON_MINOR_VERSION }}    uv .venv/bin/python update-shell     
+    #source .venv/bin/activate    
+    #uv pip install -r requirements.txt
+
+    # Set env variables so we can compile our application
+    export PATH=$MPI_ONEAPI_DIR:$PATH
+    export LD_LIBRARY_PATH=$MPI_ONEAPI_DIR:$LD_LIBRARY_PATH 
+
+    echo "Compiling the MPI application..."
+    cd /mpi_c_test && make
+    
+%test
+    python3 mpi4pytest1.py
+    echo "$I_MPI_HYDRA_BOOTSTRAP_EXEC_EXTRA_ARGS"
+    echo "$I_MPI_PMI_LIBRARY"
+    echo "$SLURM_MPI_TYPE"
+    echo "$I_MPI_OFI_PROVIDER"
+    echo "$OMPI_MCA_plm_slurm_args"
+    echo "$I_MPI_HYDRA_BOOTSTRAP"
+    echo "APPTAINER_BIND:$APPTAINER_BIND"
+    echo "APPTAINER_CACHEDIR:$APPTAINER_CACHEDIR"
+    echo "APPTAINER_BIND:$APPTAINER_BIND"
+    echo "APPTAINER_CONFIGDIR:$APPTAINER_CONFIGDIR"
+    echo "APPTAINER_CONTAINLIBS:$APPTAINER_CONTAINLIBS"
+    echo "APPTAINER_CWD:$APPTAINER_CWD" 
+    echo "APPTAINER_DEFFILE:$APPTAINER_DEFFILE" 
+    echo "APPTAINER_HOME:$APPTAINER_HOME"
+    echo "APPTAINER_NOCLEANUP:$APPTAINER_NOCLEANUP"
+    echo "APPTAINER_CONFIGDIR:$APPTAINER_CONFIGDIR"
+  
+
+    #echo "$PATH"
+    #echo "$LD_LIBRARY_PATH"
+
+
+%labels
+    Author RCS@cam.ac.uk
+    Version v0.0.1
+
+%help
+    This is a demo container used to illustrate a def file that uses hybrid method for MPI
+
+%runscript 
+    source .venv/bin/activate
+    echo "Arguments received: $*"
+    echo "$@"
+    

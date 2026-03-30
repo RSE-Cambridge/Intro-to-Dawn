@@ -1,30 +1,35 @@
-#!/bin/bash 
+#!/bin/bash
 # --- account ------------------------------------------------------
-#SBATCH --account=<FIX_ME>      # Only required if you are a member of more than one Dawn project
-#SBATCH --partition=pvc9  
-#SBATCH --mail-type=begin          # send email when job begins
-#SBATCH --mail-type=end            # send email when job ends
-#SBATCH --mail-user=<FIX_ME>
+#SBATCH --account=<FIX_ME>      
+#SBATCH --partition=pvc9    
 
 # --- resources ------------------------------------------------------
 #SBATCH --nodes=1                   # node count Normally set to 1 unless
                                     # you require multi-node, multi-GPU
-#SBATCH --job-name="ApptEx-build-sif" # create a short name for your job  
+#SBATCH --job-name="apptain-mpi-build-sif" # create a short name for your job  
 #SBATCH --ntasks-per-node=1         # total number of tasks per node
 #SBATCH --cpus-per-task=24          # cpu-cores per task (>1 if multi-threaded tasks) 
 #SBATCH --gres=gpu:1                # number of allocated gpus per node
-#SBATCH --time=00:35:00             # Time assigned for the simulation
+#SBATCH --time=00:55:00             # Time assigned for the simulation
                                     #         days-hours:minutes:seconds 
 
 
 # --- environment ----------------------------------------------------
 module purge 
-module load rhel9/default-dawn  
+module load rhel9/default-dawn 
 
-unset APPTAINER_BIND 
+# module load oneapi-level-zero/1.14/gcc/czctrcfw
 
+unset APPTAINER_BIND
+
+PATH="${PATH}:/usr/local/dawn/software/external/intel-oneapi/2025.3/mpi/2021.17/bin:/usr/local/dawn/software/external/intel-oneapi/2025.3/mpi/2021.17/libfabric/bin"
+export PATH
+
+LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/dawn/software/external/intel-oneapi/2025.3/mpi/2021.17/lib:/usr/local/dawn/software/external/intel-#oneapi/2025.3/mpi/2021.17/opt/mpi/libfabric/lib"
+
+export LD_LIBRARY_PATH
 # clean cache older than 10 days to save space
-yes Y |apptainer cache clean --days 10 
+ Y | apptainer cache clean --days 10 
 
 echo "APPTAINER_CACHEDIR=${APPTAINER_CACHEDIR}"
 
@@ -41,11 +46,12 @@ else
 fi
 echo "APPTAINER_TMPDIR=${APPTAINER_TMPDIR}"
 
+echo hostname
+
 export APPTAINER_TMPDIR;
 mkdir "${APPTAINER_TMPDIR}"
 export APPTAINER_NOCLEANUP=true
 
 # --- run ------------------------------------------------------------
-apptainer build --force "$(pwd -P)/ApptainerEx.sif" "$(pwd -P)/ApptainerEx.def"
 
-
+apptainer build --sandbox "$(pwd -P)/MPI-hybrid.sif" "$(pwd -P)/MPI-hybrid.def"

@@ -1,0 +1,76 @@
+Bootstrap: docker
+From: {{BASE_IMAGE_NAME}}:{{ BASE_IMAGE_TAG}}
+
+%arguments  
+    BASE_IMAGE_NAME=intel/intel-extension-for-pytorch
+    BASE_IMAGE_TAG=2.8.10-xpu
+    PYTHON_MAJOR_VERSION=3
+    PYTHON_MINOR_VERSION=12.5 
+    
+%files
+    ./Appt_folders/requirements.txt 
+    ./Appt_folders/test_wand.py
+    ./Appt_folders/wandb_login.py
+    
+ 
+%environment
+    export SHELL=/bin/bash 
+    export LANG=C.UTF-8  
+    export PIP_ROOT_USER_ACTION=ignore
+    export PIP_NO_CACHE_DIR=1
+    export PYTHONNOUSERSITE=True  # Disable user's local python modules in ~/.local
+
+%post 
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        apt-utils \
+        build-essential \
+        ca-certificates \
+        clinfo \
+        curl \
+        git \
+        gnupg2 \
+        gpg-agent \
+        rsync \
+        sudo \
+        unzip \
+        wget && \
+    apt-get clean && \
+    rm -rf  /var/lib/apt/lists/*
+
+  # install uv and get uv to install python
+    curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releases/download/0.9.6/uv-installer.sh | env UV_INSTALL_DIR="/usr/bin" sh
+    uv python install {{ PYTHON_MAJOR_VERSION }}.{{ PYTHON_MINOR_VERSION }} 
+
+    # create a default .venv 
+    uv venv --python {{ PYTHON_MAJOR_VERSION }}.{{ PYTHON_MINOR_VERSION }}
+    uv .venv/bin/python update-shell 
+    bash source /.venv/bin/activate
+    #uv venv
+    uv pip install -r ./Appt_folders/requirements.txt 
+ 
+
+%test
+    bash source /.venv/bin/activate
+    which python3 
+    which xpu-smi
+    python3 -c 'print("Trying to find xpu-smi & pytorch versions from within Apptainer container.")'    
+    python -c "import torch; print(torch.__version__); [print(f'[{i}]: {torch.xpu.get_device_properties(i)}') for i in range(torch.xpu.device_count())];"
+    python ./Appt_folders/wandb_login.py
+    xpu-smi -v
+    
+
+%help
+    This is a demo container
+
+
+%runscript
+
+    # xpu-smi -v
+    echo  "Run Script"
+    source .venv/bin/activate
+    python ./Appt_folders/test_wand.py
+
+%labels
+    Author here@cam.ac.uk
+    Version v0.0.1

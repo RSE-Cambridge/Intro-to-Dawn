@@ -1,0 +1,20 @@
+Bootstrap: docker
+From: {{BASE_IMAGE_NAME}}:{{ BASE_IMAGE_TAG}}
+
+%arguments  
+    BASE_IMAGE_NAME=intel/python
+    BASE_IMAGE_TAG=3.11-xpu-full
+%files
+  requirements.txt /app/requirements.txt 
+  perf_sample.py /tests/perf_sample.py
+%post
+  apt-get update && apt-get install git nano tree -y && apt-get clean autoclean
+  conda info --envs
+  . activate
+  cd /app
+  pip install --no-cache-dir -r requirements.txt 
+ 
+
+%runscript
+   . activate
+    python /tests/perf_sample.py
