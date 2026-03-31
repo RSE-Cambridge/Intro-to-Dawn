@@ -1,8 +1,6 @@
 #!/bin/bash 
 # --- account ------------------------------------------------------
-#SBATCH --account=<FIX_ME>      # Only required if you are a member of more than one Dawn project
-#SBATCH --partition=pvc9  
-#SBATCH --mail-type=begin          # send email when job begins
+#SBATCH --account=<FIX_ME>      
 #SBATCH --mail-type=end            # send email when job ends
 #SBATCH --mail-user=<FIX_ME>
 
