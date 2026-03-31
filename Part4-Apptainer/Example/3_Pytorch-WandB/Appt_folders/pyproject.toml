@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "hpc-support", email = "hpc-support@cam.ac.uk" }
 ]
-requires-python = ">=3.11.0"
+requires-python = ">=3.12.0"
 dependencies = [
     # Core dependencies
     "numpy>=1.24.0",
@@ -52,10 +52,8 @@ xpu = [
     "torchvision>=0.24.1",   
     "pytorch-triton-xpu>=3.5.0 ; sys_platform == 'linux'",  
      # Install transformers with the torch extra
-    "transformers[torch] >=4.0,<4.3",
-    "pytorch-triton-xpu>=3.3.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
+    "transformers[torch] >=4.0,<5.0",
     "accelerate",
-    "qwen-vl-utils[decord]",
 ]
 
 [tool.uv.sources]
@@ -80,85 +78,8 @@ torchvision = [
 #]
 
 pytorch-triton-xpu = [
-  { index = "pytorch-xpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
+  { index = "pytorch-xpu", marker = "sys_platform == 'linux'" },
 ]
-
-
-# Vision-Language Models (VLMs) - requires GPU
-# vlm = [
-#     "torch>=2.1.0",
-#     "torchvision>=0.16.0",
-#     "transformers>=4.45.0",
-#     "accelerate>=0.25.0",
-#     "qwen-vl-utils[decord]>=0.0.8",
-#     "flash-attn>=2.5.0; platform_system == 'Linux'",
-# ]
-
-# Qwen2.5-VL specific
-# qwen = [
-#     "torch>=2.1.0",
-#     "torchvision>=0.16.0",
-#     "transformers>=4.45.0",
-#     "accelerate>=0.25.0",
-#     "qwen-vl-utils[decord]>=0.0.8",
-# ]
-
-# olmOCR - currently disabled due to torch 2.7+ requirement
-# Install manually with: pip install olmocr torch>=2.7.0 when available
-# olmocr = [
-#     "torch>=2.7.0",
-#     "torchvision>=0.18.0",
-#     "transformers>=4.45.0",
-#     "accelerate>=0.25.0",
-#     "olmocr>=0.4.0",
-# ]
-
-# PaddleOCR-VL specific (uses PaddlePaddle) - Linux only
-# paddleocr-vl = [
-#     "paddlepaddle-gpu>=2.6.0; platform_system == 'Linux'",
-#     "transformers>=4.45.0",
-#     "einops>=0.7.0",
-# ]
-
-# All VLM models (excluding olmocr which requires torch 2.7+)
-# all-vlm = [
-#     "torch>=2.1.0",
-#     "torchvision>=0.16.0",
-#     "transformers>=4.45.0",
-#     "accelerate>=0.25.0",
-#     "qwen-vl-utils[decord]>=0.0.8",
-#     "flash-attn>=2.5.0; platform_system == 'Linux'",
-# ]
-
-# Development dependencies
-# dev = [
-#     "ipykernel>=6.0.0",
-#     "jinja2>=3.1.6",
-#     "pre-commit>=4.5.1",
-#     "pytest>=7.0.0",
-#     "pytest-cov>=4.0.0",
-#     "ruff>=0.1.0",
-#     "mypy>=1.5.0",
-#     "python-dotenv>=1.2.1",
-#     "openpyxl>=3.1.5",
-# ]
-
-# Full installation (everything except GPU-specific packages)
-# full = [
-#     "torch>=2.1.0",
-#     "torchvision>=0.16.0",
-#     "transformers>=4.45.0",
-#     "accelerate>=0.25.0",
-#     "qwen-vl-utils[decord]>=0.0.8",
-#     "ipykernel>=6.0.0",
-#     "pytest>=7.0.0",
-# ]
-
-# flash-attn requires torch to build
-
-# flash-attn needs torch available during build
-[tool.uv.extra-build-dependencies]
-flash-attn = ["torch"]
 
 # [[tool.uv.index]]
 # name = "pytorch-cpu"
@@ -182,23 +103,18 @@ explicit = true
 
 [tool.ruff]
 line-length = 88
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "C4"]
 ignore = ["E501"]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12.5"
 warn_return_any = true
 warn_unused_ignores = true
 ignore_missing_imports = true
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-addopts = "-v --tb=short"
-
+ 
 [build-system]
 requires = ["uv_build>=0.9.18,<0.10.0"]
 build-backend = "uv_build"

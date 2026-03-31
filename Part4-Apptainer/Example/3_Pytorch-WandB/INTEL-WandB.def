@@ -8,11 +8,11 @@ From: {{BASE_IMAGE_NAME}}:{{ BASE_IMAGE_TAG}}
     PYTHON_MINOR_VERSION=12.5
     
 %files
-    ./Appt_folders/pyproject.toml 
+    ./Appt_folders/pyproject.toml
+    ./Appt_folders/src/appt_wandb/__init__.py
     ./Appt_folders/test_wand.py
     ./Appt_folders/wandb_login.py
-    
- 
+
 %environment
     export SHELL=/bin/bash 
     export LANG=C.UTF-8  
@@ -44,21 +44,18 @@ From: {{BASE_IMAGE_NAME}}:{{ BASE_IMAGE_TAG}}
     cd ./Appt_folders
     # create a default .venv 
     uv venv --python {{ PYTHON_MAJOR_VERSION }}.{{ PYTHON_MINOR_VERSION }}
-    uv .venv/bin/python update-shell 
-    bash source .venv/bin/activate
-    #uv venv
-    uv pip install -r ./Appt_folders/requirements.txt 
     uv sync --project . --extra xpu
 
 %test
     cd ./Appt_folders
-    bash source .venv/bin/activate
+    source .venv/bin/activate
     which python3 
     which xpu-smi
     python3 -c 'print("Trying to find xpu-smi & pytorch versions from within Apptainer container.")'    
     python -c "import torch; print(torch.__version__); [print(f'[{i}]: {torch.xpu.get_device_properties(i)}') for i in range(torch.xpu.device_count())];"
     python -c "from transformers import pipeline; print(pipeline('sentiment-analysis')('hugging face is the best'))"
     python ./Appt_folders/wandb_login.py
+    python ./Appt_folders/test_wand.py
     xpu-smi -v
     
 
@@ -70,8 +67,8 @@ From: {{BASE_IMAGE_NAME}}:{{ BASE_IMAGE_TAG}}
 
     # xpu-smi -v
     echo  "Run Script"
+    cd ./Appt_folders
     source .venv/bin/activate
-    python ./Appt_folders/test_wand.py
 
 %labels
     Author here@cam.ac.uk

@@ -1,6 +1,6 @@
 #!/bin/bash
 # --- account ------------------------------------------------------
-#SBATCH --account=<FIX_ME>      
+#SBATCH --account=support-gpu      
 #SBATCH --partition=pvc9  
 
 # --- resources ------------------------------------------------------
