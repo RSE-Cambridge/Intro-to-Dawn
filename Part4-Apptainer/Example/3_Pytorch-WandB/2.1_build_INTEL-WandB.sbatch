@@ -1,12 +1,12 @@
-#!/bin/bash 
+#!/bin/bash
 # --- account ------------------------------------------------------
-#SBATCH --account=<FIX_ME>      
-#SBATCH --partition=pvc9    
-
+#SBATCH --account=support-gpu       
+#SBATCH --partition=pvc9   
+  
 # --- resources ------------------------------------------------------
 #SBATCH --nodes=1                     # node count Normally set to 1 unless
                                       # you require multi-node, multi-GPU
-#SBATCH --job-name="torch-sif"        # create a short name for your job  
+#SBATCH --job-name="INTEL-WandB-sif"  # create a short name for your job  
 #SBATCH --ntasks-per-node=1           # total number of tasks per node
 #SBATCH --cpus-per-task=24            # cpu-cores per task (>1 if multi-threaded tasks) 
 #SBATCH --gres=gpu:1                  # number of allocated gpus per node
