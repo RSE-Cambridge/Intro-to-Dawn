@@ -1,7 +1,7 @@
 #!/bin/bash
 # --- account ------------------------------------------------------
-#SBATCH --account=support-gpu       
-#SBATCH --partition=pvc9   
+#SBATCH --account=<FIX_ME>      
+#SBATCH --partition=pvc9  
   
 # --- resources ------------------------------------------------------
 #SBATCH --nodes=1                     # node count Normally set to 1 unless
