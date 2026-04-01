@@ -1,6 +1,6 @@
 #!/bin/bash
 # --- account ------------------------------------------------------
-#SBATCH --account=support-gpu      
+#SBATCH --account=FIX_ME      
 #SBATCH --partition=pvc9  
 
 # --- resources ------------------------------------------------------
@@ -20,7 +20,7 @@ module load rhel9/default-dawn
 module load oneapi-level-zero/1.14/gcc/czctrcfw
 
 # --- run ------------------------------------------------------------
-apptainer run --contain --fakeroot --rocm --writable-tmpfs "$(pwd -P)/INTEL-WandB.sif" 
+apptainer run --overlay Appt_folders "$(pwd -P)/INTEL-WandB.sif" 
 
 
 

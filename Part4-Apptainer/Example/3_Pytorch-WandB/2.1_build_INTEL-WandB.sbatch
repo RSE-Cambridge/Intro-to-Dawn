@@ -1,6 +1,6 @@
 #!/bin/bash
 # --- account ------------------------------------------------------
-#SBATCH --account=support-gpu      
+#SBATCH --account=FIX_ME   
 #SBATCH --partition=pvc9  
   
 # --- resources ------------------------------------------------------
@@ -47,7 +47,7 @@ echo ""
 # Exit at first failure.
 set -e
 
-CMD="apptainer build --force INTEL-WandB.sif INTEL-WandB.def"
+CMD="apptainer build --writable-tmpfs INTEL-WandB.sif INTEL-WandB.def"
 echo "${CMD}"
 eval ${CMD}
 

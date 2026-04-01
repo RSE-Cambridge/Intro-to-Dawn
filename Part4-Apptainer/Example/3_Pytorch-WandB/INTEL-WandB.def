@@ -2,24 +2,27 @@ Bootstrap: docker
 From: {{BASE_IMAGE_NAME}}:{{ BASE_IMAGE_TAG}}
 
 %arguments  
-    BASE_IMAGE_NAME=intel/intel-extension-for-pytorch
-    BASE_IMAGE_TAG=2.8.10-xpu
-    PYTHON_MAJOR_VERSION=3
-    PYTHON_MINOR_VERSION=12.5
+    BASE_IMAGE_NAME=intel/python
+    BASE_IMAGE_TAG=3.11-xpu-full
     
 %files
     ./Appt_folders/pyproject.toml
+    ./Appt_folders/README.md
     ./Appt_folders/src/appt_wandb/__init__.py
     ./Appt_folders/test_wand.py
     ./Appt_folders/wandb_login.py
+    ./Appt_folders/untitled.txt /Appt_folders/PIP_CACHE
+    ./Appt_folders/untitled.txt /Appt_folders/HF_HUB_CACHE
 
 %environment
     export SHELL=/bin/bash 
     export LANG=C.UTF-8  
     export PIP_ROOT_USER_ACTION=ignore
     export PIP_NO_CACHE_DIR=1
-    export PYTHONNOUSERSITE=True  # Disable user's local python modules in ~/.local
-
+    export PYTHONNOUSERSITE=True  # Disable user's local python modules in ~/.local 
+    export PATH=/usr/bin:/Appt_folders/.venv/bin:/root/.local/bin:$PATH
+    export HF_HUB_CACHE_DIR=/Appt_folders/HF_HUB_CACHE
+    export PIP_CACHE_DIR=/Appt_folders/PIP_CACHE
 %post 
     apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -32,32 +35,33 @@ From: {{BASE_IMAGE_NAME}}:{{ BASE_IMAGE_TAG}}
         gnupg2 \
         gpg-agent \
         rsync \
-        sudo \
         unzip \
         wget && \
     apt-get clean && \
     rm -rf  /var/lib/apt/lists/*
 
   # install uv and get uv to install python
-    curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releases/download/0.9.6/uv-installer.sh | env UV_INSTALL_DIR="/usr/bin" sh
-    uv python install {{ PYTHON_MAJOR_VERSION }}.{{ PYTHON_MINOR_VERSION }} 
+    curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releases/download/0.9.6/uv-installer.sh | env UV_INSTALL_DIR="/usr/bin" sh 
     cd ./Appt_folders
     # create a default .venv 
-    uv venv --python {{ PYTHON_MAJOR_VERSION }}.{{ PYTHON_MINOR_VERSION }}
+    uv venv
     uv sync --project . --extra xpu
 
 %test
-    cd ./Appt_folders
-    source .venv/bin/activate
+    echo "test-Start"
+    cd /Appt_folders
+    #echo "$(pwd -P)"
+    #echo "$(ls -l /Appt_folders/.venv/bin)"
+    # uv venv
+    source /Appt_folders/.venv/bin/activate
     which python3 
     which xpu-smi
     python3 -c 'print("Trying to find xpu-smi & pytorch versions from within Apptainer container.")'    
     python -c "import torch; print(torch.__version__); [print(f'[{i}]: {torch.xpu.get_device_properties(i)}') for i in range(torch.xpu.device_count())];"
     python -c "from transformers import pipeline; print(pipeline('sentiment-analysis')('hugging face is the best'))"
-    python ./Appt_folders/wandb_login.py
-    python ./Appt_folders/test_wand.py
+    python ./wandb_login.py
+    python ./test_wand.py
     xpu-smi -v
-    
 
 %help
     This is a demo container
@@ -68,8 +72,11 @@ From: {{BASE_IMAGE_NAME}}:{{ BASE_IMAGE_TAG}}
     # xpu-smi -v
     echo  "Run Script"
     cd ./Appt_folders
-    source .venv/bin/activate
-
+    bash source .venv/bin/activate
+    NOW=`date`
+    echo "Arguments received: $*"
+    echo "export NOW=\"${NOW}\"" >> /Appt_folders/Started.txt
+    echo
 %labels
     Author here@cam.ac.uk
     Version v0.0.1

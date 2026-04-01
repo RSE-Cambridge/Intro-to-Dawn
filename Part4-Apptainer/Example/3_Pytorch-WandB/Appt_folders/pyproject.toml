@@ -53,7 +53,6 @@ xpu = [
     "pytorch-triton-xpu>=3.5.0 ; sys_platform == 'linux'",  
      # Install transformers with the torch extra
     "transformers[torch] >=4.0,<5.0",
-    "accelerate",
 ]
 
 [tool.uv.sources]
