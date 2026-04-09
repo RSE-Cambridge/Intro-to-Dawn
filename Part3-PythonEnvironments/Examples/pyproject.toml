@@ -47,7 +47,7 @@ xpu = [
     "torchvision>=0.24.1",   
     "pytorch-triton-xpu>=3.5.0 ; sys_platform == 'linux'",  
      # Install transformers with the torch extra
-    "transformers[torch] >=4.0,<4.3",
+    "transformers[torch] >=4.0",
     "pytorch-triton-xpu>=3.3.0 ; sys_platform == 'win32' or sys_platform == 'linux'",
     "accelerate", 
 ] 
