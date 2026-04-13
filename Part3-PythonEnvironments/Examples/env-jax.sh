@@ -1,4 +1,17 @@
-#! /bin/bash
+#!/bin/bash
+# --- account ------------------------------------------------------ 
+#SBATCH --account FIX_THIS 
+#SBATCH --partition=pvc9 
+
+# --- resources ------------------------------------------------------
+#SBATCH --job-name=example5
+#SBATCH --time=0-00:10:00
+#SBATCH --nodes=1                   # node count Normally set to 1
+#SBATCH --ntasks-per-node=1         # total number of tasks per node
+#SBATCH --gres=gpu:1                # number of allocated gpus per node
+
+# Visit https://github.com/RSE-Cambridge/Intro-to-Dawn for more information
+# Example jax environment - This example shows how to set up a jax environment using conda and pip outside the module system
 
 # --- environment ----------------------------------------------------
 module purge 
@@ -7,8 +20,9 @@ module load intelpython-conda/2025.0
 conda activate pytorch-gpu-2.3.1 
 
 # --- Work Dir ----------------------------------------------------
-mkdir -p "/rds/user/${USER}/hpc-work/intel-jax-openxla-argonne-workload/jax_env"
-cd "/rds/user/${USER}/hpc-work/intel-jax-openxla-argonne-workload"
+RDS_FOLDER="$(find ~/rds/ -maxdepth 1 -type l -name '*rds*' -print -quit)"
+mkdir -p "${RDS_FOLDER}/intel-jax-openxla/jax_env"
+cd "${RDS_FOLDER}/intel-jax-openxla"
 export PROJECTROOT="$(pwd -P)" 
 export FULL_VENV_NAME="$(pwd -P)/tf_env"
 
@@ -17,10 +31,10 @@ echo "EnvName ${FULL_VENV_NAME}"
 
 
 # --- Cache Dirs for env ------------------------------------------
-mkdir -p "/rds/user/${USER}/hpc-work/PIP_CACHE"
-mkdir -p "/rds/user/${USER}/hpc-work/CONDA_PKGS_DIRS"     
-export PIP_CACHE_DIR="/rds/user/${USER}/hpc-work/PIP_CACHE"
-export CONDA_PKGS_DIRS="/rds/user/${USER}/hpc-work/CONDA_PKGS_DIRS"
+mkdir -p "${RDS_FOLDER}/PIP_CACHE"
+mkdir -p "${RDS_FOLDER}/CONDA_PKGS_DIRS"     
+export PIP_CACHE_DIR="${RDS_FOLDER}/PIP_CACHE"
+export CONDA_PKGS_DIRS="${RDS_FOLDER}/CONDA_PKGS_DIRS"
 
 # --- Cache Dirs for env ------------------------------------------
 conda info --envs
