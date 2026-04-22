@@ -1,6 +1,6 @@
 #!/bin/bash
 # --- account ------------------------------------------------------ 
-#SBATCH --account FIX_THIS 
+#SBATCH --account=FIX_THIS
 #SBATCH --partition=pvc9 
 
 # --- resources ------------------------------------------------------
@@ -12,18 +12,21 @@
 
 # --- environment ----------------------------------------------------
 module purge 
-module load rhel9/default-dawn      
-module load intelpython-conda/2025.0  
-conda activate pytorch-gpu-2.3.1
+module load rhel9/default-dawn
+module load intelpython-conda
+conda activate tensorflow-gpu
 
 # Visit https://github.com/RSE-Cambridge/Intro-to-Dawn for more information
 
-# Example 2 - This example just shows the bare minimum of module loading
+# Example 6 - This example just shows the bare minimum of module loading for Tensorflow
 #  It loads the module which has been provided by us for intelpython with conda
 # in load the GPU enabled environment
 
-echo "Testing GPU with pytorch"
+echo "Testing GPU with Tensorflow"
 
-python -c "import torch; import intel_extension_for_pytorch as ipex; print(torch.__version__); print(ipex.__version__); [print(f'[{i}]: {torch.xpu.get_device_properties(i)}') for i in range(torch.xpu.device_count())];"
 
- 
+echo "checking intel-extension-for-tensorflow installation:" 
+echo "Verify the CPU setup:If a tensor is returned, you've installed TensorFlow successfully."
+python3 -c "import tensorflow as tf; print(tf.reduce_sum(tf.random.normal([1000, 1000])))"
+echo "Verify the GPU setup:If a list of GPU devices is returned, you've installed TensorFlow successfully."
+python -c "import tensorflow as tf; xpus = tf.config.list_physical_devices(); print(xpus)"
