@@ -1,7 +1,8 @@
 #!/bin/bash
 # --- account ------------------------------------------------------
-#SBATCH --account=<FIX_ME>      
-#SBATCH --partition=pvc9    
+#SBATCH --account=<FIX_ACCOUNT>
+#SBATCH --qos=<FIX_QOS>
+#SBATCH --partition=<FIX_PARTITION> 
 
 # --- resources ------------------------------------------------------
 #SBATCH --nodes=1                   # node count Normally set to 1 unless
@@ -21,7 +22,7 @@ module load rhel9/default-dawn
 unset APPTAINER_BIND 
 
 # clean cache older than 10 days to save space
- Y | apptainer cache clean --days 10 
+ yes y | apptainer cache clean --days 10 
 
 echo "APPTAINER_CACHEDIR=${APPTAINER_CACHEDIR}"
 
@@ -40,7 +41,6 @@ echo "APPTAINER_TMPDIR=${APPTAINER_TMPDIR}"
 
 export APPTAINER_TMPDIR;
 mkdir "${APPTAINER_TMPDIR}"
-export APPTAINER_NOCLEANUP=true
  
 
 # --- run ------------------------------------------------------------
@@ -50,6 +50,9 @@ echo ""
 
 # Exit at first failure.
 set -e
+echo "  --sandbox"
+echo "    build image as sandbox format (chroot directory structure)"
+echo "    <<useful for debugging>>"
 
 CMD="apptainer build --sandbox HelloWorld-Py.sif HelloWorld-Py.def"
 echo "${CMD}"

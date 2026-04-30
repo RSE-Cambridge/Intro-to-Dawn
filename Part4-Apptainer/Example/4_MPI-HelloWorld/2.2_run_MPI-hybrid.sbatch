@@ -1,7 +1,7 @@
 #!/bin/bash
-# --- account ------------------------------------------------------
-#SBATCH --account=<FIX_ME>      
-#SBATCH --partition=pvc9    
+# --- account ------------------------------------------------------ 
+#SBATCH --account=<FIX_ACCOUNT>
+#SBATCH --partition=pvc9 
 
 # --- resources ------------------------------------------------------
 #SBATCH --nodes=4                      # total number of nodes

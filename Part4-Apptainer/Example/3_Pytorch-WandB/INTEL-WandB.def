@@ -4,17 +4,33 @@ From: {{BASE_IMAGE_NAME}}:{{ BASE_IMAGE_TAG}}
 %arguments  
     BASE_IMAGE_NAME=intel/python
     BASE_IMAGE_TAG=3.11-xpu-full
-    
+
+%pre
+    echo "### pre ###"
+    echo "This is a scriptlet that will be executed on the host, as root before"
+    echo "the container has been bootstrapped. This section is not commonly used."
+    echo "### pre ###"
+
+%setup
+    echo "### setup ###"
+    echo "This is a scriptlet that will be executed on the host, as root, after"
+    echo "the container has been bootstrapped. To install things into the container"
+    echo "reference the file system location with $APPTAINER_ROOTFS."
+    echo "### setup ###"
+
 %files
+    # echo "### files ###"
     ./Appt_folders/pyproject.toml
     ./Appt_folders/README.md
     ./Appt_folders/src/appt_wandb/__init__.py
     ./Appt_folders/test_wand.py
     ./Appt_folders/wandb_login.py
-    ./Appt_folders/untitled.txt /Appt_folders/PIP_CACHE
-    ./Appt_folders/untitled.txt /Appt_folders/HF_HUB_CACHE
+    ./Appt_folders/.gitkeep /Appt_folders/PIP_CACHE
+    ./Appt_folders/.gitkeep /Appt_folders/HF_HUB_CACHE
+    # echo "### files ###"
 
 %environment
+    echo "### environment ###"
     export SHELL=/bin/bash 
     export LANG=C.UTF-8  
     export PIP_ROOT_USER_ACTION=ignore
@@ -23,7 +39,21 @@ From: {{BASE_IMAGE_NAME}}:{{ BASE_IMAGE_TAG}}
     export PATH=/usr/bin:/Appt_folders/.venv/bin:/root/.local/bin:$PATH
     export HF_HUB_CACHE_DIR=/Appt_folders/HF_HUB_CACHE
     export PIP_CACHE_DIR=/Appt_folders/PIP_CACHE
+
+    # ImportError: /opt/intel/oneapi/compiler/2025.2/lib/libur_loader.so.0:
+    #  version    LIBUR_LOADER_0.1X' not found`
+    #
+    # It turns out that this error was happening because orignal docker was running:
+    #   source /opt/intel/oneapi/setvars.sh
+    # So change LD_LIBRARY_PATH to avoid
+
+    export VENV_LIB="/Appt_folders/.venv/lib"
+    export TORCH_LIB="/Appt_folders/.venv/lib/python3.11/site-packages/torch/lib"
+    export LD_LIBRARY_PATH="$VENV_LIB:$TORCH_LIB:$LD_LIBRARY_PATH"
+    echo "### environment ###"
+
 %post 
+    echo "### post ###"
     apt-get update && \
     apt-get install -y --no-install-recommends \
         apt-utils \
@@ -48,35 +78,61 @@ From: {{BASE_IMAGE_NAME}}:{{ BASE_IMAGE_TAG}}
     uv sync --project . --extra xpu
 
 %test
-    echo "test-Start"
+    echo "### test ###"
+    echo "HF_TOKEN:$HF_TOKEN"
+    echo "WANDB_API_KEY:$WANDB_API_KEY"
     cd /Appt_folders
     #echo "$(pwd -P)"
     #echo "$(ls -l /Appt_folders/.venv/bin)"
-    # uv venv
-    source /Appt_folders/.venv/bin/activate
+    # from project root (considering .venv is the virtual environment)
+    . /Appt_folders/.venv/bin/activate
     which python3 
     which xpu-smi
-    python3 -c 'print("Trying to find xpu-smi & pytorch versions from within Apptainer container.")'    
+    xpu-smi -v
+    python -c 'print("Trying to find xpu-smi & pytorch versions from within Apptainer container.")'    
+    
     python -c "import torch; print(torch.__version__); [print(f'[{i}]: {torch.xpu.get_device_properties(i)}') for i in range(torch.xpu.device_count())];"
-    python -c "from transformers import pipeline; print(pipeline('sentiment-analysis')('hugging face is the best'))"
+     python -c "from transformers import pipeline; print(pipeline('sentiment-analysis')('hugging face is the best'))"
     python ./wandb_login.py
     python ./test_wand.py
-    xpu-smi -v
+    echo "### test ###"
 
 %help
-    This is a demo container
-
+    This is a demo container for huggingface, WandB and Pytorch 2.9.1 on Dawn
 
 %runscript
+    echo "### Run Script ###"
+    echo "Define actions for the container to be executed with the run command or"
+    echo "when container is executed."
 
-    # xpu-smi -v
-    echo  "Run Script"
-    cd ./Appt_folders
-    bash source .venv/bin/activate
-    NOW=`date`
+    . /Appt_folders/.venv/bin/activate
+    NOW=$(date +%Y%m%d_%H%M%S)
     echo "Arguments received: $*"
+    echo "HF_TOKEN:$HF_TOKEN"
+    echo "WANDB_API_KEY:$WANDB_API_KEY"
     echo "export NOW=\"${NOW}\"" >> /Appt_folders/Started.txt
-    echo
+    echo 
+    
+    # start python
+    if [ $# -gt 0 ]; then
+      mkdir -p "/Appt_folders/Experiment-${NOW}"
+      cp $1 /Appt_folders/Experiment-${NOW}
+      cd /Appt_folders/Experiment-${NOW}
+      python $*
+      echo "number of parameters" >&2
+      echo "Ran Python $1"
+      exit 0
+    else
+      echo "No python file to call "
+    fi
+    echo "### Run Script ###"
+
+%startscript
+    echo  "### startscript ###"
+    echo "Define actions for container to perform when started as an instance."
+
+    echo  "### startscript ###"
+
 %labels
     Author here@cam.ac.uk
     Version v0.0.1

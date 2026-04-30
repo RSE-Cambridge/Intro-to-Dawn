@@ -1,10 +1,10 @@
 #!/bin/bash
 # --- account ------------------------------------------------------ 
-#SBATCH --account FIX_THIS 
+#SBATCH --account=<FIX_ACCOUNT>
 #SBATCH --partition=pvc9 
 
 # --- resources ------------------------------------------------------
-#SBATCH --job-name=example5
+#SBATCH --job-name=example5-UV
 #SBATCH --time=0-00:10:00
 #SBATCH --nodes=1                   # node count Normally set to 1
 #SBATCH --ntasks-per-node=1         # total number of tasks per node

@@ -1,14 +1,14 @@
 #!/bin/bash
 # --- account ------------------------------------------------------ 
-#SBATCH --account FIX_THIS 
+#SBATCH --account=<FIX_ACCOUNT>
 #SBATCH --partition=pvc9 
 
 # --- resources ------------------------------------------------------ 
 #SBATCH --job-name=example0
 #SBATCH --time=0-01:00:00
-#SBATCH --nodes=1                   # node count Normally set to 1
-#SBATCH --ntasks-per-node=1         # total number of tasks per node
-#SBATCH --gres=gpu:1                # number of allocated gpus per node
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:1
 
 # --- environment ----------------------------------------------------
 module purge

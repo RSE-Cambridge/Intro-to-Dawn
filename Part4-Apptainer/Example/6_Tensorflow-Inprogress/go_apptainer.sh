@@ -1,7 +1,7 @@
 #!/bin/bash -l
-# --- account ------------------------------------------------------ 
-#SBATCH --account=<FIX_ACCOUNT>
-#SBATCH --partition=pvc9 
+# --- account ------------------------------------------------------
+#SBATCH --account=<FIX_ME>      
+#SBATCH --partition=pvc9  
 
 # --- resources ------------------------------------------------------ 
 #SBATCH --job-name="Ddp-sif" # create a short name for your job  

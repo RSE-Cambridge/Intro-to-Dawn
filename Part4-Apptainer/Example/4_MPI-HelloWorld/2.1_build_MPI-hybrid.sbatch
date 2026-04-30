@@ -1,7 +1,8 @@
 #!/bin/bash
-# --- account ------------------------------------------------------
-#SBATCH --account=<FIX_ME>      
-#SBATCH --partition=pvc9    
+
+# --- account ------------------------------------------------------ 
+#SBATCH --account=<FIX_ACCOUNT>
+#SBATCH --partition=pvc9     
 
 # --- resources ------------------------------------------------------
 #SBATCH --nodes=1                   # node count Normally set to 1 unless
@@ -16,10 +17,7 @@
 
 # --- environment ----------------------------------------------------
 module purge 
-module load rhel9/default-dawn 
-
-# module load oneapi-level-zero/1.14/gcc/czctrcfw
-
+module load rhel9/default-dawn  
 unset APPTAINER_BIND
 
 PATH="${PATH}:/usr/local/dawn/software/external/intel-oneapi/2025.3/mpi/2021.17/bin:/usr/local/dawn/software/external/intel-oneapi/2025.3/mpi/2021.17/libfabric/bin"
@@ -29,7 +27,7 @@ LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/dawn/software/external/intel-onea
 
 export LD_LIBRARY_PATH
 # clean cache older than 10 days to save space
- Y | apptainer cache clean --days 10 
+ yes y | apptainer cache clean --days 10 
 
 echo "APPTAINER_CACHEDIR=${APPTAINER_CACHEDIR}"
 
@@ -54,4 +52,4 @@ export APPTAINER_NOCLEANUP=true
 
 # --- run ------------------------------------------------------------
 
-apptainer build --sandbox "$(pwd -P)/MPI-hybrid.sif" "$(pwd -P)/MPI-hybrid.def"
+apptainer build --force "$(pwd -P)/MPI-hybrid.sif" "$(pwd -P)/MPI-hybrid.def"

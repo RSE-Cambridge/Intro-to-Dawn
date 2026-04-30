@@ -1,7 +1,7 @@
 #!/bin/bash
 # --- account ------------------------------------------------------ 
-#SBATCH --account FIX_THIS 
-#SBATCH --partition=pvc9   
+#SBATCH --account=<FIX_ACCOUNT>
+#SBATCH --partition=pvc9  
 #SBATCH --mail-type=begin          # send email when job begins
 #SBATCH --mail-type=end            # send email when job ends
 #SBATCH --mail-user=FIX_THIS

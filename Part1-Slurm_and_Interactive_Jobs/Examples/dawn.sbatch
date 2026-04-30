@@ -11,15 +11,16 @@
 #! sbatch directives begin here ###############################
 #! Name of the job:
 #SBATCH -J testjobs
-#! Which project should be charged:
-#SBATCH -A SUPPORT-GPU
-#SBATCH -p pvc
+#! Which project should be charged: 
+# --- account ------------------------------------------------------ 
+#SBATCH --account=<FIX_ACCOUNT>
+#SBATCH --partition=pvc9 
 #! How many whole nodes should be allocated?
 #SBATCH --nodes=1
-#! How many (MPI) tasks will there be in total? (<= nodes*76)
-#! The Ice Lake (icelake) nodes have 76 CPUs (cores) each and
-#! 3380 MiB of memory per CPU.
-#SBATCH --ntasks=76
+#! How many (MPI) tasks will there be in total? (<= nodes*96)
+#! The Sapphire Rapids (PVC9) nodes have 96 CPUs (cores) each and
+#! 512 GB of memory per CPU.
+#SBATCH --ntasks=96
 #! How much wallclock time will be required?
 #SBATCH --time=00:20:00
 #! What types of email messages do you wish to receive?

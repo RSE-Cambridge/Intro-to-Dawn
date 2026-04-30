@@ -1,18 +1,17 @@
 #!/bin/bash
 # --- account ------------------------------------------------------ 
-#SBATCH --qos FIX_THIS
-#SBATCH --account FIX_THIS 
+#SBATCH --account=<FIX_ACCOUNT> 
 #SBATCH --partition=pvc9 
 
 # --- resources ------------------------------------------------------
 # Slurm to send a signal to our script 120
 # job name
-#SBATCH --job-name=example 
+#SBATCH --job-name=exampleSig 
 #SBATCH --time=0-00:04:00 
-#SBATCH --signal=B:USR1@120 
-#SBATCH --nodes=1                   # node count Normally set to 1  
-#SBATCH --ntasks-per-node=2         # total number of tasks per node 
-#SBATCH --gres=gpu:1                # number of allocated gpus per node
+#SBATCH --signal=B:USR1@120
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:1
 
 your_cleanup_function()
 {

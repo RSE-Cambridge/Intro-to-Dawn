@@ -1,7 +1,7 @@
 #!/bin/bash
-# --- account ------------------------------------------------------
-#SBATCH --account=FIX_ME   
-#SBATCH --partition=pvc9  
+# --- account ------------------------------------------------------ 
+#SBATCH --account=<FIX_ACCOUNT>
+#SBATCH --partition=pvc9   
   
 # --- resources ------------------------------------------------------
 #SBATCH --nodes=1                     # node count Normally set to 1 unless
@@ -39,6 +39,20 @@ echo "APPTAINER_TMPDIR=${APPTAINER_TMPDIR}"
 export APPTAINER_TMPDIR;
 mkdir "${APPTAINER_TMPDIR}"
 
+echo "."
+while IFS= read -r line1; do
+    echo "WANDB_API_KEY read from file: $line1"
+    WANDB_API_KEY=$line1 
+done < ${HOME}/wand_api_key.txt
+export WANDB_API_KEY
+ 
+echo "."
+while IFS= read -r line2; do
+    echo "HF_TOKEN read from file: $line2"
+    HF_TOKEN=$line2
+done < ${HOME}/hugtoken.txt
+export HF_TOKEN
+
 # --- run ------------------------------------------------------------
 T0=${SECONDS}
 echo "Image build started on $(hostname): $(date)"
@@ -46,7 +60,6 @@ echo ""
 
 # Exit at first failure.
 set -e
-
 CMD="apptainer build --writable-tmpfs INTEL-WandB.sif INTEL-WandB.def"
 echo "${CMD}"
 eval ${CMD}

@@ -1,7 +1,8 @@
 #!/bin/bash
 # --- account ------------------------------------------------------
-#SBATCH --account=<FIX_ME>      
-#SBATCH --partition=pvc9    
+#SBATCH --account=<FIX_ACCOUNT>
+#SBATCH --qos=<FIX_QOS>
+#SBATCH --partition=<FIX_PARTITION>
 
 # --- resources ------------------------------------------------------
 #SBATCH --nodes=1                   # node count Normally set to 1 unless
@@ -13,11 +14,9 @@
 #SBATCH --time=01:45:00             # Time assigned for the simulation
                                     #         days-hours:minutes:seconds 
 
-
 # --- environment ----------------------------------------------------
 module purge 
 module load rhel9/default-dawn  
-unset APPTAINER_BIND  
 
 echo "APPTAINER_CACHEDIR=${APPTAINER_CACHEDIR}"
 
@@ -32,7 +31,6 @@ echo "APPTAINER_TMPDIR=${APPTAINER_TMPDIR}"
 export APPTAINER_TMPDIR;
 mkdir "${APPTAINER_TMPDIR}"
 # --- run ------------------------------------------------------------
- 
 
 # Exit at first failure.
 set -e

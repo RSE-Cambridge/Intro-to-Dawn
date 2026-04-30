@@ -1,6 +1,6 @@
-#!/bin/bash 
-# --- account ------------------------------------------------------ 
-#SBATCH --account=<FIX_ACCOUNT>
+#!/bin/bash -l
+# --- account ------------------------------------------------------
+#SBATCH --account=<FIX_ME>      
 #SBATCH --partition=pvc9 
 
 # --- resources ------------------------------------------------------
